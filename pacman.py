@@ -43,6 +43,10 @@ class GameObject(pygame.sprite.Sprite):
     def draw(self, scr):
         scr.blit(self.image, (self.screen_rect.x, self.screen_rect.y))
 
+class Wall(GameObject):
+    def __init__(self, x,y,tile_size,map_size):
+        GameObject.__init__(self,'./resources/wall.png',x,y,tile_size,map_size)
+
 
 class Ghost(GameObject):
     def __init__(self, x, y, tile_size, map_size):
@@ -87,7 +91,8 @@ class Pacman(GameObject):
     def game_tick(self):
         super(Pacman, self).game_tick()
         if self.direction == 1:
-            self.x += self.velocity
+            if self.y!=wall.y:
+                self.x += self.velocity
             if self.x >= self.map_size-1:
                 self.x = self.map_size-1
         elif self.direction == 2:
@@ -102,25 +107,23 @@ class Pacman(GameObject):
             self.y -= self.velocity
             if self.y <= 0:
                 self.y = 0
-
         self.set_coord(self.x, self.y)
 
-
-def process_events(events, packman):
+def process_events(events, pacman):
     for event in events:
         if (event.type == QUIT) or (event.type == KEYDOWN and event.key == K_ESCAPE):
             sys.exit(0)
         elif event.type == KEYDOWN:
             if event.key == K_LEFT:
-                packman.direction = 3
+                pacman.direction = 3
             elif event.key == K_RIGHT:
-                packman.direction = 1
+                pacman.direction = 1
             elif event.key == K_UP:
-                packman.direction = 4
+                pacman.direction = 4
             elif event.key == K_DOWN:
-                packman.direction = 2
+                pacman.direction = 2
             elif event.key == K_SPACE:
-                packman.direction = 0
+                pacman.direction = 0
 
 
 if __name__ == '__main__':
@@ -129,6 +132,7 @@ if __name__ == '__main__':
     map_size = 16
     ghost = Ghost(0, 0, tile_size, map_size)
     pacman = Pacman(5, 5, tile_size, map_size)
+    wall=Wall(8,9,tile_size, map_size)
     background = pygame.image.load("./resources/background.png")
     screen = pygame.display.get_surface()
 
@@ -140,4 +144,5 @@ if __name__ == '__main__':
         draw_background(screen, background)
         pacman.draw(screen)
         ghost.draw(screen)
+        wall.draw(screen)
         pygame.display.update()
