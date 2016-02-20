@@ -1,3 +1,4 @@
+__author__ = 'Petr'
 import sys
 import pygame
 from pygame.locals import *
@@ -111,23 +112,37 @@ class Pacman(GameObject):
                 self.x += self.velocity
             if self.x >= self.map_size-1:
                 self.x = self.map_size-1
+            if is_point(floor(self.x+self.velocity), self.y):
+                MAP.map[int(self.y)].pop(floor(self.x+self.velocity))
+                MAP.map[int(self.y)].insert(floor(self.x+self.velocity),[])
+                self.velocity+=0.03
         elif self.direction == 2:
             if not is_wall(self.x, floor(self.y + self.velocity)):
                 self.y += self.velocity
             if self.y >= self.map_size-1:
                 self.y = self.map_size-1
+            if is_point(self.x, floor(self.y+self.velocity)):
+                MAP.map[floor(self.y+self.velocity)].pop(int(self.x))
+                MAP.map[floor(self.y+self.velocity)].insert(int(self.x),[])
+                self.velocity+=0.03
         elif self.direction == 3:
             if not is_wall(floor(self.x - self.velocity), self.y):
                 self.x -= self.velocity
             if self.x <= 0:
                 self.x = 0
+            if is_point(floor(self.x - self.velocity), self.y):
+                MAP.map[int(self.y)].pop(floor(self.x - self.velocity))
+                MAP.map[int(self.y)].insert(floor(self.x-self.velocity),[])
+                self.velocity+=0.03
         elif self.direction == 4:
             if not is_wall(self.x, floor(self.y - self.velocity)):
                 self.y -= self.velocity
             if self.y <= 0:
                 self.y = 0
-            if is_point(self.x, self.y):
-                self.map[-1].append(None)
+            if is_point(self.x, floor(self.y - self.velocity)):
+                MAP.map[floor(self.y - self.velocity)].pop(int(self.x))
+                MAP.map[floor(self.y-self.velocity)].insert(int(self.x),[])
+                self.velocity+=0.03
         self.set_coord(self.x, self.y)
 
 class Wall(GameObject):
@@ -145,6 +160,9 @@ def is_point(x,y):
     return isinstance(MAP.map[int(y)][int(x)], Point)
 def create_points(coords, ts, ms):
     Point.points = [Point(2, 4, ts, ms)]
+
+def is_ghost(x,y):
+    return isinstance(MAP.map[int(y)][int(x)], Ghost)
 
 class Map:
     def __init__(self, filename, tile_size, map_size):
@@ -192,7 +210,6 @@ if __name__ == '__main__':
     map_size = 16
     create_ghosts(tile_size, map_size)
     pacman = Pacman(5, 5, tile_size, map_size)
-#    create_walls(tile_size, map_size)
     global MAP
     MAP = Map('C:/Users/Petr/PycharmProjects/pacman/map.txt', tile_size, map_size)
     backgfloor = pygame.image.load("C:/Users/Petr/PycharmProjects/pacman/resources/background.png")
