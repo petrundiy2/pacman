@@ -67,7 +67,7 @@ class Ghost(GameObject):
     def __init__(self, x, y, tile_size, map_size):
         GameObject.__init__(self, 'C:/Users/Petr/PycharmProjects/pacman/resources/ghost.png', x, y, tile_size, map_size)
         self.direction = 0
-        self.velocity = 4.0 / 10.0
+        self.velocity = 6.0 / 10.0
 
     def game_tick(self):
         super(Ghost, self).game_tick()
@@ -76,25 +76,25 @@ class Ghost(GameObject):
             self.direction = random.randint(1, 4)
 
         if self.direction == 1:
-            if not is_wall(floor(self.x + self.velocity), self.y):
+            if not is_wall(floor(self.x + self.velocity), self.y) and not is_destructible_wall(floor(self.x + self.velocity),self.y):
                 self.x += self.velocity
             if self.x >= self.map_size-1:
                 self.x = self.map_size-1
                 self.direction = random.randint(1, 4)
         elif self.direction == 2:
-            if not is_wall(self.x, floor(self.y + self.velocity)):
+            if not is_wall(self.x, floor(self.y + self.velocity)) and not is_destructible_wall(self.x, floor(self.y+self.velocity)):
                 self.y += self.velocity
             if self.y >= self.map_size-1:
                 self.y = self.map_size-1
                 self.direction = random.randint(1, 4)
         elif self.direction == 3:
-            if not is_wall(floor(self.x - self.velocity), self.y):
+            if not is_wall(floor(self.x - self.velocity), self.y) and not is_destructible_wall(floor(self.x - self.velocity),self.y):
                 self.x -= self.velocity
             if self.x <= 0:
                     self.x = 0
                     self.direction = random.randint(1, 4)
         elif self.direction == 4:
-            if not is_wall(self.x, floor(self.y - self.velocity)):
+            if not is_wall(self.x, floor(self.y - self.velocity)) and not is_destructible_wall(self.x, floor(self.y-self.velocity)):
                 self.y -= self.velocity
             if self.y <= 0:
                 self.y = 0
@@ -311,7 +311,7 @@ def process_events(events, packman):
 if __name__ == '__main__':
     init_window()
     tile_size = 32
-    map_size = 16
+    map_size = 32
     create_ghosts(tile_size, map_size)
     pacman = Pacman(5, 5, tile_size, map_size)
     global MAP
@@ -323,6 +323,7 @@ if __name__ == '__main__':
 
     while 1:
         process_events(pygame.event.get(), pacman)
+
         pygame.time.delay(100)
         tick_ghosts()
         pacman.game_tick()
