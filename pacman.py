@@ -65,7 +65,7 @@ class Ghost(GameObject):
     ghosts = []
     num = 2
     def __init__(self, x, y, tile_size, map_size):
-        GameObject.__init__(self, './resources/ghost.png', x, y, tile_size, map_size)
+        GameObject.__init__(self, 'C:/Users/Petr/PycharmProjects/pacman/resources/ghost.png', x, y, tile_size, map_size)
         self.direction = 0
         self.velocity = 4.0 / 10.0
 
@@ -111,13 +111,13 @@ def tick_ghosts():
         g.game_tick()
 class Point(GameObject):
     def __init__(self, x, y, tile_size, map_size):
-        GameObject.__init__(self, './resources/point.png', x, y, tile_size, map_size)
+        GameObject.__init__(self, 'C:/Users/Petr/PycharmProjects/pacman/resources/point.png', x, y, tile_size, map_size)
         self.direction=0
     def game_tick(self):
         super(Point, self).game_tick()
 class Sword(GameObject):
     def __init__(self,x,y,tile_size,map_size):
-        GameObject.__init__(self, './resources/sword.png',x,y,tile_size, map_size)
+        GameObject.__init__(self, 'C:/Users/Petr/PycharmProjects/pacman/resources/sword.png',x,y,tile_size, map_size)
         self.direction=0
 class Map:
     def __init__(self, filename, tile_size, map_size):
@@ -136,6 +136,8 @@ class Map:
                     self.k+=1
                 elif txt[y][x]=='S':
                     self.map[-1].append(Sword(x,y,tile_size, map_size))
+                elif txt[y][x]=='$':
+                    self.map[-1].append(Destructible_Wall(x,y,tile_size,map_size))
                 else:
                     self.map[-1].append(None)
         self.tile_size = tile_size
@@ -158,16 +160,17 @@ for i in range(len(l)):
 print(pts)
 class Pacman(GameObject):
     def __init__(self, x, y, tile_size, map_size):
-        GameObject.__init__(self, './resources/pacman.png', x, y, tile_size, map_size)
+        GameObject.__init__(self, 'C:/Users/Petr/PycharmProjects/pacman/resources/pacman.png', x, y, tile_size, map_size)
         self.direction = 0
         self.velocity = 4.0 / 10.0
         self.points=pts
         self.gw=0
         self.death=0
+        self.sword=0
     def game_tick(self):
         super(Pacman, self).game_tick()
         if self.direction == 1:
-            if not is_wall(floor(self.x + self.velocity), self.y):
+            if not is_wall(floor(self.x + self.velocity), self.y) and not is_destructible_wall(floor(self.x + self.velocity),self.y):
                 self.x += self.velocity
             if self.x >= self.map_size-1:
                 self.x = self.map_size-1
@@ -180,8 +183,13 @@ class Pacman(GameObject):
                 MAP.map[int(self.y)].pop(int(floor(self.x+self.velocity)))
                 MAP.map[int(self.y)].insert(int(floor(self.x+self.velocity)),[])
                 self.death-=5
+                self.sword=1
+            if self.sword==1:
+                if is_destructible_wall(floor(self.x+self.velocity),self.y):
+                    MAP.map[int(self.y)].pop(int(floor(self.x+self.velocity)))
+                    MAP.map[int(self.y)].insert(int(floor(self.x+self.velocity)),[])
         elif self.direction == 2:
-            if not is_wall(self.x, floor(self.y + self.velocity)):
+            if not is_wall(self.x, floor(self.y + self.velocity)) and not is_destructible_wall(self.x, floor(self.y+self.velocity)):
                 self.y += self.velocity
             if self.y >= self.map_size-1:
                 self.y = self.map_size-1
@@ -194,8 +202,13 @@ class Pacman(GameObject):
                 MAP.map[int(floor(self.y + self.velocity))].pop(int(self.x))
                 MAP.map[int(floor(self.y+self.velocity))].insert(int(self.x),[])
                 self.death-=5
+                self.sword=1
+            if self.sword==1:
+                if is_destructible_wall(self.x,floor(self.y+self.velocity)):
+                    MAP.map[int(floor(self.y + self.velocity))].pop(int(self.x))
+                    MAP.map[int(floor(self.y+self.velocity))].insert(int(self.x),[])
         elif self.direction == 3:
-            if not is_wall(floor(self.x - self.velocity), self.y):
+            if not is_wall(floor(self.x - self.velocity), self.y) and not is_destructible_wall(floor(self.x - self.velocity),self.y):
                 self.x -= self.velocity
             if self.x <= 0:
                 self.x = 0
@@ -208,8 +221,13 @@ class Pacman(GameObject):
                 MAP.map[int(self.y)].pop(int(floor(self.x-self.velocity)))
                 MAP.map[int(self.y)].insert(int(floor(self.x-self.velocity)),[])
                 self.death-=5
+                self.sword=1
+            if self.sword==1:
+                if is_destructible_wall(floor(self.x-self.velocity),self.y):
+                    MAP.map[int(self.y)].pop(int(floor(self.x-self.velocity)))
+                    MAP.map[int(self.y)].insert(int(floor(self.x-self.velocity)),[])
         elif self.direction == 4:
-            if not is_wall(self.x, floor(self.y - self.velocity)):
+            if not is_wall(self.x, floor(self.y - self.velocity)) and not is_destructible_wall(self.x, floor(self.y-self.velocity)):
                 self.y -= self.velocity
             if self.y <= 0:
                 self.y = 0
@@ -222,6 +240,11 @@ class Pacman(GameObject):
                 MAP.map[int(floor(self.y - self.velocity))].pop(int(self.x))
                 MAP.map[int(floor(self.y-self.velocity))].insert(int(self.x),[])
                 self.death-=5
+                self.sword=1
+            if self.sword==1:
+                if is_destructible_wall(self.x, floor(self.y-self.velocity)):
+                    MAP.map[int(floor(self.y - self.velocity))].pop(int(self.x))
+                    MAP.map[int(floor(self.y-self.velocity))].insert(int(self.x),[])
         self.set_coord(self.x, self.y)
         for g in Ghost.ghosts:
             if int(g.x)==int(self.x) and int(g.y)==int(self.y):
@@ -231,18 +254,30 @@ class Pacman(GameObject):
                 g.direction=self.direction
         if self.points==0:
             self.gw=1
+
 class Wall(GameObject):
     def __init__(self, x, y, tile_size, map_size):
-        GameObject.__init__(self, './resources/wall.png', x, y, tile_size, map_size)
+        GameObject.__init__(self, 'C:/Users/Petr/PycharmProjects/pacman/resources/wall.png', x, y, tile_size, map_size)
         self.direction=0
     def game_tick(self):
         super(Wall, self).game_tick()
+
+class Destructible_Wall(GameObject):
+    def __init__(self, x, y, tile_size, map_size):
+        GameObject.__init__(self, 'C:/Users/Petr/PycharmProjects/pacman/resources/destructible_wall.png', x, y, tile_size, map_size)
+        self.direction=0
+    def game_tick(self):
+        super(Destructible_Wall, self).game_tick()
 
 def is_wall(x, y):
     return isinstance(MAP.map[int(y)][int(x)], Wall)
 def create_walls(coords, ts, ms):
     Wall.walls = [Wall(2, 4, ts, ms)]
 
+def is_destructible_wall(x,y):
+    return isinstance(MAP.map[int(y)][int(x)], Destructible_Wall)
+def create_destructible_walls(coords, ts, ms):
+    Destructible_Wall.destructible_walls = [Destructible_Wall(2, 4, ts, ms)]
 def is_point(x,y):
     return isinstance(MAP.map[int(y)][int(x)], Point)
 
@@ -280,10 +315,10 @@ if __name__ == '__main__':
     create_ghosts(tile_size, map_size)
     pacman = Pacman(5, 5, tile_size, map_size)
     global MAP
-    MAP = Map('./map.txt', tile_size, map_size)
-    backgfloor = pygame.image.load("./resources/background.png")
-    game_win=pygame.image.load("./resources/game_win.png")
-    game_lose=pygame.image.load("./resources/game_lose.png")
+    MAP = Map('C:/Users/Petr/PycharmProjects/pacman/map.txt', tile_size, map_size)
+    backgfloor = pygame.image.load("C:/Users/Petr/PycharmProjects/pacman/resources/background.png")
+    game_win=pygame.image.load("C:/Users/Petr/PycharmProjects/pacman/resources/game_win.png")
+    game_lose=pygame.image.load("C:/Users/Petr/PycharmProjects/pacman/resources/game_lose.png")
     screen = pygame.display.get_surface()
 
     while 1:
