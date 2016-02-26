@@ -1,4 +1,3 @@
-__author__ = 'Petr'
 import sys
 import pygame
 from pygame.locals import *
@@ -9,7 +8,7 @@ import time
 
 def init_window():
     pygame.init()
-    pygame.display.set_mode((512, 512))
+    pygame.display.set_mode((1024, 512))
     pygame.display.set_caption('Pacman')
 
 
@@ -63,16 +62,16 @@ class GameObject(pygame.sprite.Sprite):
 
 class Ghost(GameObject):
     ghosts = []
-    num = 2
+    num = 1
     def __init__(self, x, y, tile_size, map_size):
         GameObject.__init__(self, 'C:/Users/Petr/PycharmProjects/pacman/resources/ghost.png', x, y, tile_size, map_size)
         self.direction = 0
-        self.velocity = 6.0 / 10.0
+        self.velocity = 5.0/ 10.0
 
     def game_tick(self):
         super(Ghost, self).game_tick()
 
-        if self.tick % 20 == 0 or self.direction == 0:
+        if self.tick % 20 == 0 or self.direction == 0 and movingarrow.ghost!=1:
             self.direction = random.randint(1, 4)
 
         if self.direction == 1:
@@ -100,6 +99,101 @@ class Ghost(GameObject):
                 self.y = 0
                 self.direction = random.randint(1, 4)
         self.set_coord(self.x, self.y)
+class MovingArrow (GameObject):
+    def __init__(self,x,y,tile_size,map_size):
+        GameObject.__init__(self,'C:/Users/Petr/PycharmProjects/pacman/resources/moving_arrow.png',x,y,tile_size, map_size)
+        self.direction=0
+        self.velocity = 4.0 / 10.0
+        self.ghost=0
+    def game_tick(self):
+        super(MovingArrow, self).game_tick()
+        if self.direction == 1:
+            if not is_wall(floor(self.x + self.velocity), self.y) and not is_destructible_wall(floor(self.x + self.velocity),self.y):
+                self.x += self.velocity
+            if self.x >= self.map_size-1:
+                self.x = self.map_size-1
+        elif self.direction == 2:
+            if not is_wall(self.x, floor(self.y + self.velocity)) and not is_destructible_wall(self.x, floor(self.y+self.velocity)):
+                self.y += self.velocity
+            if self.y >= self.map_size-1:
+                self.y = self.map_size-1
+        elif self.direction == 3:
+            if not is_wall(floor(self.x - self.velocity), self.y) and not is_destructible_wall(floor(self.x - self.velocity),self.y):
+                self.x -= self.velocity
+            if self.x <= 0:
+                self.x = 0
+        elif self.direction == 4:
+            if not is_wall(self.x, floor(self.y - self.velocity)) and not is_destructible_wall(self.x, floor(self.y-self.velocity)):
+                self.y -= self.velocity
+            if self.y <= 0:
+                self.y = 0
+        if pacman.movingarrow==1 and pacman.crossbow==1 and pacman.arrow==1:
+            self.velocity=10.0 / 10.0
+        self.set_coord(self.x, self.y)
+        for g in Ghost.ghosts:
+            if int(g.x)==int(self.x) and int(g.y)==int(self.y):
+                g.direction=0
+                self.ghost=1
+class MovingBow (GameObject):
+    def __init__(self,x,y,tile_size,map_size):
+        GameObject.__init__(self,'C:/Users/Petr/PycharmProjects/pacman/resources/crossbow.png',x,y,tile_size, map_size)
+        self.direction=0
+        self.velocity = 4.0 / 10.0
+    def game_tick(self):
+        super(MovingBow, self).game_tick()
+        if self.direction == 1:
+            if not is_wall(floor(self.x + self.velocity), self.y) and not is_destructible_wall(floor(self.x + self.velocity),self.y):
+                self.x += self.velocity
+            if self.x >= self.map_size-1:
+                self.x = self.map_size-1
+        elif self.direction == 2:
+            if not is_wall(self.x, floor(self.y + self.velocity)) and not is_destructible_wall(self.x, floor(self.y+self.velocity)):
+                self.y += self.velocity
+            if self.y >= self.map_size-1:
+                self.y = self.map_size-1
+        elif self.direction == 3:
+            if not is_wall(floor(self.x - self.velocity), self.y) and not is_destructible_wall(floor(self.x - self.velocity),self.y):
+                self.x -= self.velocity
+            if self.x <= 0:
+                self.x = 0
+        elif self.direction == 4:
+            if not is_wall(self.x, floor(self.y - self.velocity)) and not is_destructible_wall(self.x, floor(self.y-self.velocity)):
+                self.y -= self.velocity
+            if self.y <= 0:
+                self.y = 0
+        self.set_coord(self.x, self.y)
+class MovingSword (GameObject):
+    def __init__(self,x,y,tile_size,map_size):
+        GameObject.__init__(self,'C:/Users/Petr/PycharmProjects/pacman/resources/sword.png',x,y,tile_size, map_size)
+        self.direction=0
+        self.velocity = 4.0 / 10.0
+    def game_tick(self):
+        super(MovingSword, self).game_tick()
+        if self.direction == 1:
+            if not is_wall(floor(self.x + self.velocity), self.y) and not is_destructible_wall(floor(self.x + self.velocity),self.y):
+                self.x += self.velocity
+            if self.x >= self.map_size-1:
+                self.x = self.map_size-1
+        elif self.direction == 2:
+            if not is_wall(self.x, floor(self.y + self.velocity)) and not is_destructible_wall(self.x, floor(self.y+self.velocity)):
+                self.y += self.velocity
+            if self.y >= self.map_size-1:
+                self.y = self.map_size-1
+        elif self.direction == 3:
+            if not is_wall(floor(self.x - self.velocity), self.y) and not is_destructible_wall(floor(self.x - self.velocity),self.y):
+                self.x -= self.velocity
+            if self.x <= 0:
+                self.x = 0
+        elif self.direction == 4:
+            if not is_wall(self.x, floor(self.y - self.velocity)) and not is_destructible_wall(self.x, floor(self.y-self.velocity)):
+                self.y -= self.velocity
+            if self.y <= 0:
+                self.y = 0
+        self.set_coord(self.x, self.y)
+def init_music():
+   pygame.init()
+   pygame.mixer.music.load('C:/Users/Petr/PycharmProjects/pacman/resources/music.mp3')
+   pygame.mixer.music.play()
 
 def draw_ghosts(screen):
     for g in Ghost.ghosts:
@@ -119,6 +213,16 @@ class Sword(GameObject):
     def __init__(self,x,y,tile_size,map_size):
         GameObject.__init__(self, 'C:/Users/Petr/PycharmProjects/pacman/resources/sword.png',x,y,tile_size, map_size)
         self.direction=0
+class CrossBow(GameObject):
+    def __init__(self,x,y,tile_size,map_size):
+        GameObject.__init__(self,'C:/Users/Petr/PycharmProjects/pacman/resources/crossbow.png',x,y,tile_size, map_size)
+        self.direction=0
+class Arrow (GameObject):
+    def __init__(self,x,y,tile_size,map_size):
+        GameObject.__init__(self,'C:/Users/Petr/PycharmProjects/pacman/resources/arrow.png',x,y,tile_size, map_size)
+        self.direction=0
+
+
 class Map:
     def __init__(self, filename, tile_size, map_size):
         self.map = []
@@ -138,6 +242,10 @@ class Map:
                     self.map[-1].append(Sword(x,y,tile_size, map_size))
                 elif txt[y][x]=='$':
                     self.map[-1].append(Destructible_Wall(x,y,tile_size,map_size))
+                elif txt[y][x]=='C':
+                    self.map[-1].append(CrossBow(x,y,tile_size,map_size))
+                elif txt[y][x]=='A':
+                    self.map[-1].append(Arrow(x,y,tile_size,map_size))
                 else:
                     self.map[-1].append(None)
         self.tile_size = tile_size
@@ -167,6 +275,9 @@ class Pacman(GameObject):
         self.gw=0
         self.death=0
         self.sword=0
+        self.crossbow=0
+        self.arrow=0
+        self.movingarrow=0
     def game_tick(self):
         super(Pacman, self).game_tick()
         if self.direction == 1:
@@ -177,13 +288,21 @@ class Pacman(GameObject):
             if is_point(floor(self.x+self.velocity), self.y):
                 MAP.map[int(self.y)].pop(int(floor(self.x+self.velocity)))
                 MAP.map[int(self.y)].insert(int(floor(self.x+self.velocity)),[])
-                self.velocity+=0.03
                 self.points-=1
             if is_sword(floor(self.x+self.velocity),self.y):
                 MAP.map[int(self.y)].pop(int(floor(self.x+self.velocity)))
                 MAP.map[int(self.y)].insert(int(floor(self.x+self.velocity)),[])
                 self.death-=5
                 self.sword=1
+            if is_arrow(floor(self.x+self.velocity),self.y):
+                MAP.map[int(self.y)].pop(int(floor(self.x+self.velocity)))
+                MAP.map[int(self.y)].insert(int(floor(self.x+self.velocity)),[])
+                self.arrow=1
+            if is_crossbow(floor(self.x+self.velocity),self.y):
+                MAP.map[int(self.y)].pop(int(floor(self.x+self.velocity)))
+                MAP.map[int(self.y)].insert(int(floor(self.x+self.velocity)),[])
+                self.death-=3
+                self.crossbow=1
             if self.sword==1:
                 if is_destructible_wall(floor(self.x+self.velocity),self.y):
                     MAP.map[int(self.y)].pop(int(floor(self.x+self.velocity)))
@@ -196,13 +315,21 @@ class Pacman(GameObject):
             if is_point(self.x, floor(self.y+self.velocity)):
                 MAP.map[int(floor(self.y+self.velocity))].pop(int(self.x))
                 MAP.map[int(floor(self.y+self.velocity))].insert(int(self.x),[])
-                self.velocity+=0.03
                 self.points-=1
             if is_sword(self.x, floor(self.y+self.velocity)):
                 MAP.map[int(floor(self.y + self.velocity))].pop(int(self.x))
                 MAP.map[int(floor(self.y+self.velocity))].insert(int(self.x),[])
                 self.death-=5
                 self.sword=1
+            if is_arrow(self.x, floor(self.y+self.velocity)):
+                MAP.map[int(floor(self.y + self.velocity))].pop(int(self.x))
+                MAP.map[int(floor(self.y+self.velocity))].insert(int(self.x),[])
+                self.arrow=1
+            if is_crossbow(self.x, floor(self.y+self.velocity)):
+                MAP.map[int(floor(self.y + self.velocity))].pop(int(self.x))
+                MAP.map[int(floor(self.y+self.velocity))].insert(int(self.x),[])
+                self.death-=3
+                self.crossbow=1
             if self.sword==1:
                 if is_destructible_wall(self.x,floor(self.y+self.velocity)):
                     MAP.map[int(floor(self.y + self.velocity))].pop(int(self.x))
@@ -215,13 +342,21 @@ class Pacman(GameObject):
             if is_point(floor(self.x - self.velocity), self.y):
                 MAP.map[int(self.y)].pop(int(floor(self.x - self.velocity)))
                 MAP.map[int(self.y)].insert(int(floor(self.x-self.velocity)),[])
-                self.velocity+=0.03
                 self.points-=1
             if is_sword(floor(self.x-self.velocity),self.y):
                 MAP.map[int(self.y)].pop(int(floor(self.x-self.velocity)))
                 MAP.map[int(self.y)].insert(int(floor(self.x-self.velocity)),[])
                 self.death-=5
                 self.sword=1
+            if is_arrow(floor(self.x-self.velocity),self.y):
+                MAP.map[int(self.y)].pop(int(floor(self.x-self.velocity)))
+                MAP.map[int(self.y)].insert(int(floor(self.x-self.velocity)),[])
+                self.arrow=1
+            if is_crossbow(floor(self.x-self.velocity),self.y):
+                MAP.map[int(self.y)].pop(int(floor(self.x-self.velocity)))
+                MAP.map[int(self.y)].insert(int(floor(self.x-self.velocity)),[])
+                self.death-=3
+                self.crossbow=1
             if self.sword==1:
                 if is_destructible_wall(floor(self.x-self.velocity),self.y):
                     MAP.map[int(self.y)].pop(int(floor(self.x-self.velocity)))
@@ -234,13 +369,21 @@ class Pacman(GameObject):
             if is_point(self.x, floor(self.y - self.velocity)):
                 MAP.map[int(floor(self.y - self.velocity))].pop(int(self.x))
                 MAP.map[int(floor(self.y-self.velocity))].insert(int(self.x),[])
-                self.velocity+=0.03
                 self.points-=1
             if is_sword(self.x, floor(self.y-self.velocity)):
                 MAP.map[int(floor(self.y - self.velocity))].pop(int(self.x))
                 MAP.map[int(floor(self.y-self.velocity))].insert(int(self.x),[])
                 self.death-=5
                 self.sword=1
+            if is_arrow(self.x, floor(self.y-self.velocity)):
+                MAP.map[int(floor(self.y - self.velocity))].pop(int(self.x))
+                MAP.map[int(floor(self.y-self.velocity))].insert(int(self.x),[])
+                self.arrow=1
+            if is_crossbow(self.x, floor(self.y-self.velocity)):
+                MAP.map[int(floor(self.y - self.velocity))].pop(int(self.x))
+                MAP.map[int(floor(self.y-self.velocity))].insert(int(self.x),[])
+                self.death-=3
+                self.crossbow=1
             if self.sword==1:
                 if is_destructible_wall(self.x, floor(self.y-self.velocity)):
                     MAP.map[int(floor(self.y - self.velocity))].pop(int(self.x))
@@ -283,6 +426,10 @@ def is_point(x,y):
 
 def is_sword(x,y):
     return isinstance(MAP.map[int(y)][int(x)], Sword)
+def is_crossbow(x,y):
+    return isinstance(MAP.map[int(y)][int(x)], CrossBow)
+def is_arrow(x,y):
+    return isinstance(MAP.map[int(y)][int(x)],Arrow)
 
 def create_points(coords, ts, ms):
     Point.points = [Point(2, 4, ts, ms)]
@@ -290,23 +437,45 @@ def create_points(coords, ts, ms):
 def is_ghost(x,y):
     return isinstance(MAP.map[int(y)][int(x)], Ghost)
 
-
-
-def process_events(events, packman):
+def process_events(events, packman, movingarrow, bow, sword):
     for event in events:
         if (event.type == QUIT) or (event.type == KEYDOWN and event.key == K_ESCAPE):
             sys.exit(0)
         elif event.type == KEYDOWN:
             if event.key == K_LEFT:
                 packman.direction = 3
+                if pacman.movingarrow!=1:
+                    movingarrow.direction=3
+                bow.direction=3
+                sword.direction=3
             elif event.key == K_RIGHT:
                 packman.direction = 1
+                if pacman.movingarrow!=1:
+                    movingarrow.direction=1
+                bow.direction=1
+                sword.direction=1
             elif event.key == K_UP:
                 packman.direction = 4
+                if pacman.movingarrow!=1:
+                    movingarrow.direction=4
+                bow.direction=4
+                sword.direction=4
             elif event.key == K_DOWN:
                 packman.direction = 2
+                if pacman.movingarrow!=1:
+                    movingarrow.direction=2
+                bow.direction=2
+                sword.direction=2
             elif event.key == K_SPACE:
                 packman.direction = 0
+                if pacman.movingarrow!=1:
+                    movingarrow.direction=0
+                bow.direction=0
+                sword.direction=0
+            elif event.key == K_LCTRL:
+                if packman.arrow==1 and packman.crossbow==1:
+                    packman.movingarrow=1
+
 
 if __name__ == '__main__':
     init_window()
@@ -314,25 +483,38 @@ if __name__ == '__main__':
     map_size = 32
     create_ghosts(tile_size, map_size)
     pacman = Pacman(5, 5, tile_size, map_size)
+    movingarrow=MovingArrow(5,5,tile_size, map_size)
+    bow=MovingBow(5,5,tile_size,map_size)
+    sword=MovingSword(5,5,tile_size,map_size)
     global MAP
     MAP = Map('C:/Users/Petr/PycharmProjects/pacman/map.txt', tile_size, map_size)
     backgfloor = pygame.image.load("C:/Users/Petr/PycharmProjects/pacman/resources/background.png")
     game_win=pygame.image.load("C:/Users/Petr/PycharmProjects/pacman/resources/game_win.png")
     game_lose=pygame.image.load("C:/Users/Petr/PycharmProjects/pacman/resources/game_lose.png")
     screen = pygame.display.get_surface()
+    init_music()
 
     while 1:
-        process_events(pygame.event.get(), pacman)
-
+        process_events(pygame.event.get(), pacman, movingarrow, bow, sword)
         pygame.time.delay(100)
-        tick_ghosts()
+        if movingarrow.ghost!=1:
+            tick_ghosts()
         pacman.game_tick()
+        movingarrow.game_tick()
+        bow.game_tick()
+        sword.game_tick()
         draw_backgfloor(screen, backgfloor)
         if pacman.gw==1:
             draw_game_win(screen, game_win)
         if pacman.death>0:
             draw_game_lose(screen,game_lose)
         pacman.draw(screen)
+        if pacman.arrow==1 and movingarrow.direction!=0:
+            movingarrow.draw(screen)
+        if pacman.crossbow==1:
+            bow.draw(screen)
+        if pacman.sword==1:
+            sword.draw(screen)
         draw_ghosts(screen)
         MAP.draw(screen)
         pygame.display.update()
