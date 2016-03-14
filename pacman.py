@@ -64,7 +64,7 @@ class Ghost(GameObject):
     ghosts = []
     num = 1
     def __init__(self, x, y, tile_size, map_size):
-        GameObject.__init__(self, 'C:/Users/Petr/PycharmProjects/pacman/resources/ghost.png', x, y, tile_size, map_size)
+        GameObject.__init__(self, './resources/ghost.png', x, y, tile_size, map_size)
         self.direction = 0
         self.velocity = 5.0/ 10.0
 
@@ -101,7 +101,7 @@ class Ghost(GameObject):
         self.set_coord(self.x, self.y)
 class MovingArrow (GameObject):
     def __init__(self,x,y,tile_size,map_size):
-        GameObject.__init__(self,'C:/Users/Petr/PycharmProjects/pacman/resources/moving_arrow.png',x,y,tile_size, map_size)
+        GameObject.__init__(self,'./resources/moving_arrow.png',x,y,tile_size, map_size)
         self.direction=0
         self.velocity = 4.0 / 10.0
         self.ghost=0
@@ -136,7 +136,7 @@ class MovingArrow (GameObject):
                 self.ghost=1
 class MovingBow (GameObject):
     def __init__(self,x,y,tile_size,map_size):
-        GameObject.__init__(self,'C:/Users/Petr/PycharmProjects/pacman/resources/crossbow.png',x,y,tile_size, map_size)
+        GameObject.__init__(self,'./resources/crossbow.png',x,y,tile_size, map_size)
         self.direction=0
         self.velocity = 4.0 / 10.0
     def game_tick(self):
@@ -164,7 +164,7 @@ class MovingBow (GameObject):
         self.set_coord(self.x, self.y)
 class MovingSword (GameObject):
     def __init__(self,x,y,tile_size,map_size):
-        GameObject.__init__(self,'C:/Users/Petr/PycharmProjects/pacman/resources/sword.png',x,y,tile_size, map_size)
+        GameObject.__init__(self,'./resources/sword.png',x,y,tile_size, map_size)
         self.direction=0
         self.velocity = 4.0 / 10.0
     def game_tick(self):
@@ -192,7 +192,7 @@ class MovingSword (GameObject):
         self.set_coord(self.x, self.y)
 def init_music():
    pygame.init()
-   pygame.mixer.music.load('C:/Users/Petr/PycharmProjects/pacman/resources/music.mp3')
+   pygame.mixer.music.load('./resources/music.mp3')
    pygame.mixer.music.play()
 
 def draw_ghosts(screen):
@@ -205,21 +205,21 @@ def tick_ghosts():
         g.game_tick()
 class Point(GameObject):
     def __init__(self, x, y, tile_size, map_size):
-        GameObject.__init__(self, 'C:/Users/Petr/PycharmProjects/pacman/resources/point.png', x, y, tile_size, map_size)
+        GameObject.__init__(self, './resources/point.png', x, y, tile_size, map_size)
         self.direction=0
     def game_tick(self):
         super(Point, self).game_tick()
 class Sword(GameObject):
     def __init__(self,x,y,tile_size,map_size):
-        GameObject.__init__(self, 'C:/Users/Petr/PycharmProjects/pacman/resources/sword.png',x,y,tile_size, map_size)
+        GameObject.__init__(self, './resources/sword.png',x,y,tile_size, map_size)
         self.direction=0
 class CrossBow(GameObject):
     def __init__(self,x,y,tile_size,map_size):
-        GameObject.__init__(self,'C:/Users/Petr/PycharmProjects/pacman/resources/crossbow.png',x,y,tile_size, map_size)
+        GameObject.__init__(self,'./resources/crossbow.png',x,y,tile_size, map_size)
         self.direction=0
 class Arrow (GameObject):
     def __init__(self,x,y,tile_size,map_size):
-        GameObject.__init__(self,'C:/Users/Petr/PycharmProjects/pacman/resources/arrow.png',x,y,tile_size, map_size)
+        GameObject.__init__(self,'./resources/arrow.png',x,y,tile_size, map_size)
         self.direction=0
 
 
@@ -268,7 +268,7 @@ for i in range(len(l)):
 print(pts)
 class Pacman(GameObject):
     def __init__(self, x, y, tile_size, map_size):
-        GameObject.__init__(self, 'C:/Users/Petr/PycharmProjects/pacman/resources/pacman.png', x, y, tile_size, map_size)
+        GameObject.__init__(self, './resources/pacman.png', x, y, tile_size, map_size)
         self.direction = 0
         self.velocity = 4.0 / 10.0
         self.points=pts
@@ -400,14 +400,14 @@ class Pacman(GameObject):
 
 class Wall(GameObject):
     def __init__(self, x, y, tile_size, map_size):
-        GameObject.__init__(self, 'C:/Users/Petr/PycharmProjects/pacman/resources/wall.png', x, y, tile_size, map_size)
+        GameObject.__init__(self, './resources/wall.png', x, y, tile_size, map_size)
         self.direction=0
     def game_tick(self):
         super(Wall, self).game_tick()
 
 class Destructible_Wall(GameObject):
     def __init__(self, x, y, tile_size, map_size):
-        GameObject.__init__(self, 'C:/Users/Petr/PycharmProjects/pacman/resources/destructible_wall.png', x, y, tile_size, map_size)
+        GameObject.__init__(self, './resources/destructible_wall.png', x, y, tile_size, map_size)
         self.direction=0
     def game_tick(self):
         super(Destructible_Wall, self).game_tick()
@@ -487,10 +487,10 @@ if __name__ == '__main__':
     bow=MovingBow(5,5,tile_size,map_size)
     sword=MovingSword(5,5,tile_size,map_size)
     global MAP
-    MAP = Map('C:/Users/Petr/PycharmProjects/pacman/map.txt', tile_size, map_size)
-    backgfloor = pygame.image.load("C:/Users/Petr/PycharmProjects/pacman/resources/background.png")
-    game_win=pygame.image.load("C:/Users/Petr/PycharmProjects/pacman/resources/game_win.png")
-    game_lose=pygame.image.load("C:/Users/Petr/PycharmProjects/pacman/resources/game_lose.png")
+    MAP = Map('./pacman/map.txt', tile_size, map_size)
+    backgfloor = pygame.image.load("./resources/background.png")
+    game_win=pygame.image.load("./resources/game_win.png")
+    game_lose=pygame.image.load("./resources/game_lose.png")
     screen = pygame.display.get_surface()
     init_music()
 
